@@ -92,3 +92,46 @@ def check_winner(grid, playersign):
             return True
 
     return False # Returns false if there isn't 4 in a row
+
+def current_player(playersign): # Switches the current player
+    if playersign == 'S' or 'Y':
+        return 'X'
+    elif playersign == 'X':
+        return 'Y'
+
+class UserRetry(Exception): # Custom exception to reset the place_counter loop
+    pass
+
+def place_counter(playersign, grid):
+    while True:
+        try: # Try except loop to prevent letters from being entered
+            column = (int(input('Please enter the column you wish to place your counter in'))) - 1 # Column input
+            if (grid["row{row}".format(row = 5)][column] != '-'): # Checks for if the column is already full
+                print('That column is full, please choose another column')
+                raise(UserRetry) # Resets the loop
+            else:
+                break
+        except UserRetry:
+            pass
+        except:
+            print('Please enter a column between 1-7')
+    
+    while True:
+        try: # Try except loop to prevent letters from being entered
+            row = (int(input('Please enter the row you wish to place your counter in'))) - 1 # Row input
+            if (grid["row{row}".format(row = row)][column] != '-'):
+                print('There is already a counter there')
+                raise(UserRetry)
+            else:
+                if row > 0:
+                    if (grid["row{row}".format(row = (row - 1))][column] == '-'):
+                        print('Please enter a valid row')
+                        raise(UserRetry)
+                else:
+                    break
+        except UserRetry:
+            pass
+        except:
+            print('Please enter a row between 1-6')
+    return(column, row)
+        

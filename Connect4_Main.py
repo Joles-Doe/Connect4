@@ -13,9 +13,18 @@ grid = reset_grid() # creates a new grid
 
 playersign = 'S' # Resets player order
 
+intro_message()
+
 Game = False
 while (Game == False): # While loop to play until someone wins
+    print_grid(grid)
     playersign = current_player(playersign)
+    time.sleep(3)
+    grid = place_counter(playersign, grid)
+    time.sleep(2)
+    if check_winner() == True:
+        break
+
 
 
 ### Winner segment here, where the condition is check_winner == True ###

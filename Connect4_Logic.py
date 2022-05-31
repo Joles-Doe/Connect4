@@ -1,7 +1,7 @@
 ### Connect 4 = {7 columns, 6 rows} ###
 ### player 1 counters are defined by 'X', player 2 counters are defined by 'Y' ###
 ### Rows are inverted - for example: row5 is the bottom row ###
-
+import time
 
 def reset_grid():
     grid_dictionary = {} # Dictionary
@@ -105,33 +105,38 @@ class UserRetry(Exception): # Custom exception to reset the place_counter loop
 def place_counter(playersign, grid):
     while True:
         try: # Try except loop to prevent letters from being entered
-            column = (int(input('Please enter the column you wish to place your counter in'))) - 1 # Column input
+            column = (int(input('Please enter the column you wish to place your counter in '))) - 1 # Column input
             if (grid["row{row}".format(row = 5)][column] != '-'): # Checks for if the column is already full
                 print('That column is full, please choose another column')
                 raise(UserRetry) # Resets the loop
             else:
                 break
-        except UserRetry:
+        except UserRetry: # Custom exception to reset the loop
             pass
         except:
             print('Please enter a column between 1-7')
     
+    row = 0
     while True:
-        try: # Try except loop to prevent letters from being entered
-            row = (int(input('Please enter the row you wish to place your counter in'))) - 1 # Row input
-            if (grid["row{row}".format(row = row)][column] != '-'):
-                print('There is already a counter there')
-                raise(UserRetry)
-            else:
-                if row > 0:
-                    if (grid["row{row}".format(row = (row - 1))][column] == '-'):
-                        print('Please enter a valid row')
-                        raise(UserRetry)
-                else:
-                    break
-        except UserRetry:
-            pass
-        except:
-            print('Please enter a row between 1-6')
-    return(column, row)
+        if (grid["row{row}".format(row = row)][column] != '-'): # Automatically finds the lowest point in the grid
+            row += 1
+        else:
+            grid["row{row}".format(row = row)][column] = playersign # Replaces the current value with the current player's sign
+            return grid
         
+def print_grid(grid):
+    for x in reversed(list(grid.values())):
+        print(x)
+
+def intro_message():
+    print('Welcome to connect 4')
+    time.sleep(1)
+    print('The aim of the game is to get 4 counters in a row - diagonally, horizontally, or vertically.')
+    time.sleep(1)
+    print('The first player to achieve this wins!')
+    time.sleep(1)
+    print('Player 1 will start first, with their counter defined as "X"')
+    time.sleep(1)
+    print('Player 2 will follow, their counter defined as "Y"')
+    time.sleep(1)
+    print('Good luck, may the best player win!')

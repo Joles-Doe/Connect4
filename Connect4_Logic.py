@@ -94,12 +94,12 @@ def check_winner(grid, playersign):
     return False # Returns false if there isn't 4 in a row
 
 def current_player(playersign): # Switches the current player
-    if playersign == 'S' or 'Y':
+    if playersign == 'S' or playersign == 'Y':
         return 'X'
     elif playersign == 'X':
         return 'Y'
 
-class UserRetry(Exception): # Custom exception to reset the place_counter loop
+class ColumnFull(Exception): # Custom exception to reset the place_counter loop
     pass
 
 def place_counter(playersign, grid):
@@ -108,12 +108,12 @@ def place_counter(playersign, grid):
             column = (int(input('Please enter the column you wish to place your counter in '))) - 1 # Column input
             if (grid["row{row}".format(row = 5)][column] != '-'): # Checks for if the column is already full
                 print('That column is full, please choose another column')
-                raise(UserRetry) # Resets the loop
+                raise(ColumnFull) # Resets the loop
             else:
                 break
-        except UserRetry: # Custom exception to reset the loop
+        except ColumnFull: # Custom exception to reset the loop
             pass
-        except:
+        except Exception:
             print('Please enter a column between 1-7')
     
     row = 0
@@ -123,20 +123,4 @@ def place_counter(playersign, grid):
         else:
             grid["row{row}".format(row = row)][column] = playersign # Replaces the current value with the current player's sign
             return grid
-        
-def print_grid(grid):
-    for x in reversed(list(grid.values())):
-        print(x)
 
-def intro_message():
-    print('Welcome to connect 4')
-    time.sleep(1)
-    print('The aim of the game is to get 4 counters in a row - diagonally, horizontally, or vertically.')
-    time.sleep(1)
-    print('The first player to achieve this wins!')
-    time.sleep(1)
-    print('Player 1 will start first, with their counter defined as "X"')
-    time.sleep(1)
-    print('Player 2 will follow, their counter defined as "Y"')
-    time.sleep(1)
-    print('Good luck, may the best player win!')

@@ -2,6 +2,11 @@
 ### player 1 counters are defined by 'X', player 2 counters are defined by 'Y' ###
 ### Rows are inverted - for example: row5 is the bottom row ###
 import time
+import pygame
+pygame.init()
+# Imports ^
+
+
 
 def print_grid(grid):
     for x in reversed(list(grid.values())):

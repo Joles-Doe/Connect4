@@ -1,6 +1,6 @@
 import time
-from Connect4_Logic import * # Imports all the functions from a separate file
-from Connect4_GUI import * # Imports GUI **[subject to change]**
+from Connect4_Logic_CLI import * # Imports all the functions from a separate file
+from Connect4_CLI_Interface import * # Imports GUI **[subject to change]**
 # Imports ^
 
 ### Connect 4 = {7 columns, 6 rows} ###

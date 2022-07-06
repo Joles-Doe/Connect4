@@ -2,7 +2,50 @@
 ### player 1 counters are defined by 'X', player 2 counters are defined by 'Y' ###
 ### Rows are inverted - for example: row5 is the bottom row ###
 import time
-from Connect4_GUI_Interface import * # Imports GUI
+import pygame
+pygame.init()
+# Imports ^
+
+class gamecolours():
+    global red, blue, lightblue, yellow, white, slate, black
+    red = (255, 0, 0)
+    blue = 	(0, 0, 255)
+    lightblue = (111, 187, 211)
+    yellow = (255, 255, 0)
+    white = (255, 255, 255)
+    slate = (112, 128, 144)
+    black = (0, 0, 0)
+
+class gamescreen():
+    global screen
+    screen = pygame.display.set_mode((740, 740)) #width, height
+    pygame.display.set_caption('Test')
+
+def draw_board(grid):
+    global board
+    board = pygame.Surface((screen.get_size()))
+    board.fill(slate)
+    pygame.draw.rect(board, lightblue, [0, 0, 740, 640])
+    radius = 40
+    xoffset = 70
+    yoffset = 70
+    circlewidth = 100
+    circleheight = 100
+    colour = white
+    for x in range(7):
+        for y in range(6):
+            sign = grid["row{row}".format(row = 5 - y)][x]
+            if sign == 'X':
+                colour = red
+            elif sign == 'Y':
+                colour = yellow
+            else:
+                colour = white
+            pygame.draw.circle(board, colour, (xoffset + (x * circlewidth), yoffset + (y * circleheight)), radius)
+
+def draw_carot(column):
+    pygame.draw.line(board, red, [44 + (column * 100), 680], [69 + (column * 100), 630], 10) # make a carot
+    pygame.draw.line(board, red, [94 + (column * 100), 680], [69 + (column * 100), 630], 10)
 
 def reset_grid():
     grid_dictionary = {} # Dictionary
@@ -111,6 +154,63 @@ def place_counter(playersign, grid, column):
             row += 1
         else:
             grid["row{row}".format(row = row)][column] = playersign # Replaces the current value with the current player's sign
-            draw_board(grid, playersign, row, column)
             return grid
 
+def counter_array(column, row):
+    global counterlist
+    counterlist = []
+    counterlist.append(int(f"{column}{row}"))
+
+def winner_message(playersign):
+    if playersign == 'X':
+        player = 'red'
+    else:
+        player = 'yellow'
+    font_style = pygame.font.SysFont(None, 50)
+    message = font_style.render('Congratulations, {} player, you won!'.format(player), True, black)
+    message_rect = message.get_rect(center = (740 / 2, 640 / 2))
+    screen.blit(message, message_rect)
+    pygame.display.flip()
+    time.sleep(3)
+
+### Begin game ###
+grid = reset_grid() # creates a new grid
+playersign = 'S' # Resets player order
+
+
+x = False
+column = 0
+while x == False:
+    for event in pygame.event.get():
+        draw_board(grid)
+        win = check_winner(grid, playersign)
+        if win == True:
+            screen.blit(board, (0,0))
+            pygame.display.flip()
+            print('win')
+            x = True
+            break        
+        if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    if column == 0:
+                        pass
+                    else:
+                        column -= 1
+                elif event.key == pygame.K_RIGHT:
+                    if column == 6:
+                        pass
+                    else:
+                        column += 1
+                elif event.key == pygame.K_RETURN:
+                    playersign = current_player(playersign)
+                    grid_temp = grid
+                    grid = place_counter(playersign, grid, column)
+                    if grid == False:
+                        grid = grid_temp
+        draw_carot(column)
+        screen.blit(board, (0,0))
+        pygame.display.flip()
+        if event.type == pygame.QUIT:
+            x = True
+
+winner_message(playersign)

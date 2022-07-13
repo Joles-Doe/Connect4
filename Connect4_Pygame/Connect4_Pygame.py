@@ -3,8 +3,17 @@
 ### Rows are inverted - for example: row5 is the bottom row ###
 import time
 import pygame
+from KV_STORE import KVScore
 pygame.init()
 # Imports ^
+
+
+# game_id = 'game1'
+# kv_store = KVScore(app_key="0em39cvh")
+# kv_store.store_game(game_id, grid, playersign)
+# grid, playersign = kv_store.get_game(game_id)
+
+
 
 class gamecolours():
     global red, blue, lightblue, yellow, white, slate, black

@@ -230,16 +230,22 @@ def draw_carot(column):
     pygame.draw.line(board, red, [94 + (column * 100), 680], [69 + (column * 100), 630], 10)
 
 
+def create_message(message, x, y, fontstyle=None):
+    if fontstyle is None:
+        fontstyle = pygame.font.SysFont(None, 70) # Defaults to a size 70 font
+    messageid = fontstyle.render(message, True, white)
+    message_rectid = messageid.get_rect(center = (x, y)) # Message container
+    screen.blit(messageid, message_rectid)
+    pygame.display.flip()
+    return message_rectid
+
+
 def winner_message(playersign, chosenplayer):
     font_style = pygame.font.SysFont(None, 50)
     if playersign == chosenplayer:
-        message = font_style.render('Congratulations, you won!', True, black)
-        message_rect = message.get_rect(center = (740 / 2, 640 / 2))
+        create_message('Congratulations, you won!', 370, 320, font_style)
     else:
-        message = font_style.render('Unfortunately, you lost :(', True, black)
-        message_rect = message.get_rect(center = (740 / 2, 640 / 2))
-    screen.blit(message, message_rect)
-    pygame.display.flip()
+        create_message('Unfortunately, you lost :(', 370, 320, font_style)
     time.sleep(3)
 
 
@@ -249,10 +255,7 @@ def winner_messagelocal(playersign):
     else:
         player = 'yellow'
     font_style = pygame.font.SysFont(None, 50)
-    message = font_style.render('Congratulations, {} player, you won!'.format(player), True, black)
-    message_rect = message.get_rect(center = (740 / 2, 640 / 2))
-    screen.blit(message, message_rect)
-    pygame.display.flip()
+    create_message('Congratulations, {} player, you won!'.format(player), 370, 320, font_style)
     time.sleep(3)
 
 # Pygame gameplay loops
@@ -265,19 +268,11 @@ def main_menu():
     mouse = pygame.mouse.get_pos() # mouse
     menu = pygame.Surface((screen.get_size()))
     font_style = pygame.font.SysFont(None, 50)
-    font_style_title = pygame.font.SysFont('Cooper Black', 100)
-    messagelocal = font_style.render('Local play', True, white)
-    message_rectlocal = messagelocal.get_rect(center = (740 / 2, 270))
-    messagecreate = font_style.render('Create a game', True, white)
-    message_rectcreate = messagecreate.get_rect(center = (740 / 2, 370))
-    messagejoin = font_style.render('Join a game', True, white)
-    message_rectjoin = messagejoin.get_rect(center = (740 / 2, 470))
-    message_title = font_style_title.render('CONNECT 4', True, white)
-    message_titlerect = message_title.get_rect(center = (740 / 2, 100))
-    screen.blit(messagelocal, message_rectlocal)
-    screen.blit(messagecreate, message_rectcreate)
-    screen.blit(messagejoin, message_rectjoin)
-    screen.blit(message_title, message_titlerect)
+    font_style_title = pygame.font.SysFont(None, 100)
+    create_message('CONNECT 4', 370, 100, font_style_title)
+    message_rectlocal = create_message('Local play', 370, 270, font_style)
+    message_rectcreate = create_message('Create a game', 370, 370, font_style)
+    message_rectjoin = create_message('Join a game', 370, 470, font_style)
     x = False
     while x == False:
         for event in pygame.event.get():
@@ -303,20 +298,10 @@ def game_create(grid, playersign):
     kv_store = KVScore()
     kv_store.store_game(game_id, grid, playersign)
     menu = pygame.Surface((screen.get_size()))
-    font_style = pygame.font.SysFont(None, 70)
-    messageid = font_style.render('Your ID is "{}"'.format(kv_store.app_key), True, white)
-    message_rectid = messageid.get_rect(center = (740 / 2, 170))
-    screen.blit(messageid, message_rectid)
-    messageid = font_style.render('share this with the other player', True, white)
-    message_rectid = messageid.get_rect(center = (740 / 2, 230))
-    screen.blit(messageid, message_rectid)
-    messageid = font_style.render('Game will start upon', True, white)
-    message_rectid = messageid.get_rect(center = (740 / 2, 430))
-    screen.blit(messageid, message_rectid)
-    messageid = font_style.render('second player joining', True, white)
-    message_rectid = messageid.get_rect(center = (740 / 2, 490))
-    screen.blit(messageid, message_rectid)
-    pygame.display.flip()
+    create_message('Your ID is "{}"'.format(kv_store.app_key), 370, 170)
+    create_message('share this with the other player', 370, 230)
+    create_message('Game will start upon', 370, 430)
+    create_message('second player joining', 370, 490)
     wait = False
     while wait == False:
         grid, playersign = kv_store.get_game(game_id)
@@ -333,18 +318,14 @@ def game_create(grid, playersign):
 
 
 def game_join():
-    def check_real(text, font_style):
+    def check_real(text):
         game_id = 'CONNECT4'
         kv_store = KVScore(app_key = text)
         grid, playersign = kv_store.get_game(game_id)
         print(playersign)
         if grid == 'FAILED' and playersign == 'FAILED':
-            messageid = font_style.render('Invalid ID, please check', True, white)
-            message_rectid = messageid.get_rect(center = (740 / 2, 420))
-            screen.blit(messageid, message_rectid)
-            messageid = font_style.render('if the ID is correct', True, white)
-            message_rectid = messageid.get_rect(center = (740 / 2, 480))
-            screen.blit(messageid, message_rectid)
+            create_message('Invalid ID, please check', 370, 420)
+            create_message('if the ID is correct', 370, 480)
             pygame.event.pump()
             pygame.time.wait(2000)
             return False
@@ -352,13 +333,10 @@ def game_join():
             return True
     menu = pygame.Surface((screen.get_size()))
     join = False
-    font_style = pygame.font.SysFont(None, 70)
     text = ''
     menu.fill(black)
     screen.blit(menu, (0,0))
-    messageid = font_style.render('Please enter the game ID', True, white)
-    message_rectid = messageid.get_rect(center = (740 / 2, 130))
-    screen.blit(messageid, message_rectid)
+    create_message('Please enter the game ID', 370, 130)
     while join == False:
         pygame.display.flip()
         for event in pygame.event.get():
@@ -367,7 +345,7 @@ def game_join():
                     text = text[:-1]
                 if event.key == pygame.K_RETURN:
                     print(text)
-                    isreal = check_real(text, font_style)
+                    isreal = check_real(text)
                     if isreal == True:
                         print('Game joined')
                         kv_store = KVScore(app_key = text)
@@ -382,22 +360,14 @@ def game_join():
                         break
                     else:
                         menu.fill(black)
-                        messageid = font_style.render('Please enter the game ID', True, white)
-                        message_rectid = messageid.get_rect(center = (740 / 2, 130))
-                        screen.blit(messageid, message_rectid)
-                        pygame.display.flip()
+                        create_message('Please enter the game ID', 370, 130)
                         text = ''
                 else:
                     menu.fill(black)
                     screen.blit(menu, (0,0))
                     text += event.unicode
-                    messageid = font_style.render('Please enter the game ID', True, white)
-                    message_rectid = messageid.get_rect(center = (740 / 2, 130))
-                    screen.blit(messageid, message_rectid)
-                    messageid = font_style.render('{}'.format(text), True, white)
-                    message_rectid = messageid.get_rect(center = (740 / 2, 220))
-                    screen.blit(messageid, message_rectid)
-                    pygame.display.flip()
+                    create_message('Please enter the game ID', 370, 130)
+                    create_message('{}'.format(text), 370, 220)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -452,13 +422,14 @@ def game_online(chosenplayer, appkey):
         if playersign == chosenplayer:
             placed = False
             while placed == False:
+                win = check_winner(grid, playersign)
+                if win == True:
+                    screen.blit(board, (0,0))
+                    pygame.display.flip()
+                    winner_message(playersign, chosenplayer)
+                    x = True
+                    break
                 for event in pygame.event.get():
-                    win = check_winner(grid, playersign)
-                    if win == True:
-                            screen.blit(board, (0,0))
-                            pygame.display.flip()
-                            winner_message(playersign, chosenplayer)
-                            break
                     if event.type == pygame.QUIT:
                         x = True
                     draw_board(grid)    
